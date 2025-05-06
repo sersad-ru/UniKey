@@ -14,7 +14,7 @@
 #include "version.h"
 #include "flashcfg.h"
 #include "pinout.h"
-
+#include <Keyboard.h>
 //#define RESET_FLASH_CFG //Сбросить конфигурацию
 
 
@@ -68,6 +68,16 @@ void setup() {
   digitalWrite(COL_2, HIGH);
   digitalWrite(COL_3, HIGH);
   digitalWrite(COL_4, HIGH);  
+
+  delay(2000); // Короче, под гномом пока толком не работает. Пересекается с самой ардуиной.
+  Keyboard.press(KEY_LEFT_ALT);
+  Keyboard.press(KEY_LEFT_SHIFT);
+  Keyboard.write("u");
+  Keyboard.release(KEY_LEFT_SHIFT);
+  Keyboard.release(KEY_LEFT_ALT); //u   u00b0
+  Keyboard.write("00b0\n"); 
+  //Keyboard.write(KEY_RETURN);// градус
+
 }//setup
 
 
@@ -83,6 +93,7 @@ void loop() {
     // Короче, все, что можно через ALT-ы - в винде (проверять по charmap)
     // По линуху:  https://help.ubuntu.com/stable/ubuntu-help/tips-specialchars.html
     // Ctrl+Shift+u <hex-код на основных кнопках и маленьких буквах> <space> или <enter>
+    // Иметь ввиду, что смену раскладки надо свалить только на правые Ctrl+Shift (если оставить на любой - то работать не будет)
 /*    
     Keyboard.press(KEY_LEFT_ALT); //https://support.microsoft.com/en-us/office/insert-ascii-or-unicode-latin-based-symbols-and-characters-d13f58d3-7bcb-44a7-a4d5-972ee12e50e0
     Keyboard.write(KEY_KP_0);
