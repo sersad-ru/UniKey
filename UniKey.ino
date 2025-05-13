@@ -14,9 +14,18 @@
 #include "version.h"
 #include "flashcfg.h"
 #include "pinout.h"
+#include "keypad.h"
+#include "mode_sw.h"
+
 #include <Keyboard.h>
+
+
 //#define RESET_FLASH_CFG //Сбросить конфигурацию
 
+// Конфиг
+flashcfg cfg;
+Keypad keypad = Keypad(); // Кнопки
+ModeSW sw = ModeSW(); // Переключатель режима
 
 void setup() {
   Serial.begin(9600);
@@ -45,30 +54,20 @@ void setup() {
   Serial.println();
 */
 
-  // Настраиваем светодиод
-  pinMode(LED_R, OUTPUT);
-  pinMode(LED_G, OUTPUT);
 
-  // Настраиваем переключатель
-  pinMode(SW_T, INPUT_PULLUP);
-  pinMode(SW_B, INPUT_PULLUP);
+  //Serial.println(KP_NUM(10));
+  
+/*
+#define arraySize(_array) ( sizeof(_array) / sizeof(*(_array)) )
+  uint16_t arr [] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
 
-  // Настраиваем линии кнопок
-  pinMode(ROW_A, INPUT_PULLUP);
-  pinMode(ROW_B, INPUT_PULLUP);
-  pinMode(ROW_C, INPUT_PULLUP);
-  pinMode(ROW_D, INPUT_PULLUP);
+  ssArrayPrintln(Serial, arr, arraySize(arr));
+  memcpy(arr, &arr[1], sizeof(arr) - sizeof(arr[0]));
+  memcpy(arr, &arr[1], sizeof(arr) - sizeof(arr[0]));
+  ssArrayPrintln(Serial, arr, arraySize(arr)); 
+*/
 
-  pinMode(COL_1, OUTPUT);
-  pinMode(COL_2, OUTPUT);
-  pinMode(COL_3, OUTPUT);
-  pinMode(COL_4, OUTPUT);
-
-  digitalWrite(COL_1, HIGH);
-  digitalWrite(COL_2, HIGH);
-  digitalWrite(COL_3, HIGH);
-  digitalWrite(COL_4, HIGH);  
-
+/*
   delay(2000); // Короче, под гномом пока толком не работает. Пересекается с самой ардуиной.
   Keyboard.press(KEY_LEFT_ALT);
   Keyboard.press(KEY_LEFT_SHIFT);
@@ -77,17 +76,24 @@ void setup() {
   Keyboard.release(KEY_LEFT_ALT); //u   u00b0
   Keyboard.write("00b0\n"); 
   //Keyboard.write(KEY_RETURN);// градус
-
+*/
 }//setup
 
 
 void loop() {
   //ssMultiPrintln(Serial, "SW_T:", digitalRead(SW_T), " SW_B:", digitalRead(SW_B));
-  digitalWrite(LED_G, digitalRead(SW_T)); // Красный
-  digitalWrite(LED_R, digitalRead(SW_B)); // Зеленый
+  //digitalWrite(LED_G, digitalRead(SW_T)); // Красный
+  //digitalWrite(LED_R, digitalRead(SW_B)); // Зеленый
   // Если средняя позиция, т.е. оба = 1, то будет желтый
   //ssMultiPrintln(Serial, "A:", digitalRead(ROW_A), " B:", digitalRead(ROW_B), " C:", digitalRead(ROW_C), " D:", digitalRead(ROW_D));
-  delay(500);
+
+  keypad.exec();
+  static ssExecutor exObj = ssExecutor();
+  exObj.exec(1000, [](){
+    uint16_t val = keypad.getKey();
+    if(val) ssMultiPrintln(Serial, "Key:", KP_NUM(val));
+  });
+  //delay(500);
 
     // Юникоды: https://symbl.cc
     // Короче, все, что можно через ALT-ы - в винде (проверять по charmap)
