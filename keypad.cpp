@@ -48,8 +48,7 @@ uint8_t Keypad::_put(const uint16_t val){
 uint16_t Keypad::_get(){
   if(_is_empty()) return KP_NONE;
   uint16_t val = _buf[0]; // Взяли значение из начала
-  memcpy(_buf, &_buf[1], sizeof(_buf) - sizeof(_buf[0]));  //Сдвигаем буфер влево на 1
-  _buf_tail--; // Сдвинули хвост
+  memcpy(_buf, &_buf[1], sizeof(_buf[0]) * _buf_tail--);  //Сдвигаем буфер влево на 1 и сдвигаем хвост
   return val;
 }//_get
 

@@ -60,11 +60,18 @@ void setup() {
 /*
 #define arraySize(_array) ( sizeof(_array) / sizeof(*(_array)) )
   uint16_t arr [] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+  uint8_t _buf_tail = 9; 
 
   ssArrayPrintln(Serial, arr, arraySize(arr));
-  memcpy(arr, &arr[1], sizeof(arr) - sizeof(arr[0]));
-  memcpy(arr, &arr[1], sizeof(arr) - sizeof(arr[0]));
-  ssArrayPrintln(Serial, arr, arraySize(arr)); 
+
+  for(uint8_t i = 0; i < 5; i++){
+    
+    memcpy(arr, &arr[1], sizeof(arr[0]) * _buf_tail--);  //Сдвигаем буфер влево на 1 и сдвигаем хвост
+  //memcpy(arr, &arr[1], sizeof(arr) - sizeof(arr[0]));
+  //memcpy(arr, &arr[1], sizeof(arr) - sizeof(arr[0]));
+    ssMultiPrint(Serial, _buf_tail, " -> "); 
+    ssArrayPrintln(Serial, arr, arraySize(arr)); 
+  }
 */
 
 /*
@@ -88,10 +95,12 @@ void loop() {
   //ssMultiPrintln(Serial, "A:", digitalRead(ROW_A), " B:", digitalRead(ROW_B), " C:", digitalRead(ROW_C), " D:", digitalRead(ROW_D));
 
   keypad.exec();
+  sw.exec();
   static ssExecutor exObj = ssExecutor();
   exObj.exec(1000, [](){
     uint16_t val = keypad.getKey();
     if(val) ssMultiPrintln(Serial, "Key:", KP_NUM(val));
+    ssMultiPrintln(Serial, "SW:", sw.getState());
   });
   //delay(500);
 
