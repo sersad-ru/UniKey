@@ -22,13 +22,20 @@ class ModeSW  : public ssExecutor {
     ModeSW();
 
     // Получить состояние переключателя
-    SWState getState(){return _state;};
+    SWState getState(){_was_changed = false; return _state;};
+
+    // Вернет 1, если состояние изменилось после последнего вызова getState, иначе вернет 0
+    uint8_t wasChanged(){ return _was_changed;};
 
     // Периодическая работа
     void run() override;
   private:
-    SWState _state;
+    SWState _state; // Текущее состояние переключателя
+    uint8_t _was_changed = false; // Флаг того, что состояние сменилось
+
     // Прочесть состояние переключателя
     SWState _read_state();
 
+    // Отобразить состояние светодиодом
+    void _show_state();
 };//class

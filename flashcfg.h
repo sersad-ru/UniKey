@@ -5,17 +5,35 @@
 #include <Arduino.h>
 
 #define FF(val) ((const __FlashStringHelper*)val)
+#define arraySize(_array) ( sizeof(_array) / sizeof(*(_array)) )
 
 // Параметры по-умолчанию
 // Код кнопки
-//const char KEY_CODE_VAL[] PROGMEM = "Key";
-//#define KEY_CODE_NAME FF(KEY_CODE_VAL)
-//#define KEY_CODE_0_DEFAULT KEY_LEFT_SHIFT // Слева направо, сверху вних
+const char KEY_CODE_VAL[] PROGMEM = "Key_";
+#define KEY_CODE_NAME FF(KEY_CODE_VAL)
+
+#define KEY_CODE_0_DEFAULT  0x0030 // "0" - Кнопка 0 (слева направо, сверху вниз) 
+#define KEY_CODE_1_DEFAULT  0x0031 // "1"
+#define KEY_CODE_2_DEFAULT  0x0032 // "2"
+#define KEY_CODE_3_DEFAULT  0x0033 // "3"
+#define KEY_CODE_4_DEFAULT  0x0034 // "4"
+#define KEY_CODE_5_DEFAULT  0x0035 // "5"
+#define KEY_CODE_6_DEFAULT  0x0036 // "6"
+#define KEY_CODE_7_DEFAULT  0x0037 // "7"
+#define KEY_CODE_8_DEFAULT  0x0038 // "8"
+#define KEY_CODE_9_DEFAULT  0x0039 // "9"
+#define KEY_CODE_10_DEFAULT 0x0041 // "A"
+#define KEY_CODE_11_DEFAULT 0x0042 // "B"
+#define KEY_CODE_12_DEFAULT 0x0043 // "C"
+#define KEY_CODE_13_DEFAULT 0x0044 // "D"
+#define KEY_CODE_14_DEFAULT 0x0045 // "E"
+#define KEY_CODE_15_DEFAULT 0x0046 // "F"
 
 // Параметры конфигурации
 typedef struct {
   uint8_t  noValue; // Флаг того (==1), что не было сохраненных значений 
-
+  
+  uint16_t keyCode[16]; // Коды выводимых символов [0..15] (unicode 2 байта)
 } flashcfg;
 
 bool cfg_init(flashcfg &cfg); //Подготовиться к работе с конфигом и загрузить его, а если надо и прописать по умолчанию (вернет false - если по умолчанию)

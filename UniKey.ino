@@ -16,6 +16,8 @@
 #include "pinout.h"
 #include "keypad.h"
 #include "mode_sw.h"
+#include "cmd.h"
+#include "app.h"
 
 #include <Keyboard.h>
 
@@ -26,6 +28,8 @@
 flashcfg cfg;
 Keypad keypad = Keypad(); // Кнопки
 ModeSW sw = ModeSW(); // Переключатель режима
+CMD cmd = CMD(Serial); // Командный интерфейс
+App app = App(&cfg, &keypad, &sw, &cmd); // Приложение
 
 void setup() {
   Serial.begin(9600);
@@ -43,7 +47,6 @@ void setup() {
   ssMultiPrintln(Serial, "\n", APP_NAME, APP_VER, APP_COPYRIGHT, APP_SERSAD);
   ssMultiPrintln(Serial, APP_BUILD_ID, BUILD_ID);
 
-/*
   cfg_init(cfg); // Инициализируем конфиг (значения по умолчанию ставятся там же - в flashcfg.cpp
   Serial.println(F("\nConfig loaded."));
 #ifdef RESET_FLASH_CFG
@@ -52,8 +55,9 @@ void setup() {
 #endif
   if(Serial.availableForWrite()) cfg_print(Serial, cfg);
   Serial.println();
-*/
 
+  cfg.keyCode[0] = 0x221E;
+  cfg.keyCode[1] = 0xff1E;
 
   //Serial.println(KP_NUM(10));
   
@@ -82,26 +86,29 @@ void setup() {
   Keyboard.release(KEY_LEFT_SHIFT);
   Keyboard.release(KEY_LEFT_ALT); //u   u00b0
   Keyboard.write("00b0\n"); 
-  //Keyboard.write(KEY_RETURN);// градус
+  //Keyboard.write(KEY_RETURN);// градус 
 */
 }//setup
 
 
 void loop() {
+  app.run();
+
   //ssMultiPrintln(Serial, "SW_T:", digitalRead(SW_T), " SW_B:", digitalRead(SW_B));
   //digitalWrite(LED_G, digitalRead(SW_T)); // Красный
   //digitalWrite(LED_R, digitalRead(SW_B)); // Зеленый
   // Если средняя позиция, т.е. оба = 1, то будет желтый
   //ssMultiPrintln(Serial, "A:", digitalRead(ROW_A), " B:", digitalRead(ROW_B), " C:", digitalRead(ROW_C), " D:", digitalRead(ROW_D));
-
+/*
   keypad.exec();
   sw.exec();
   static ssExecutor exObj = ssExecutor();
   exObj.exec(1000, [](){
     uint16_t val = keypad.getKey();
     if(val) ssMultiPrintln(Serial, "Key:", KP_NUM(val));
-    ssMultiPrintln(Serial, "SW:", sw.getState());
+    //ssMultiPrintln(Serial, "SW:", sw.getState());
   });
+*/  
   //delay(500);
 
     // Юникоды: https://symbl.cc
