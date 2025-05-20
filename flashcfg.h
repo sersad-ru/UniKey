@@ -29,11 +29,22 @@ const char KEY_CODE_VAL[] PROGMEM = "Key_";
 #define KEY_CODE_14_DEFAULT 0x0045 // "E"
 #define KEY_CODE_15_DEFAULT 0x0046 // "F"
 
+// Режим переключателя 
+const char SW_MODE_VAL[] PROGMEM = "Green is ";
+#define SW_MODE_NAME FF(SW_MODE_VAL)
+const char SW_MODE_WIN_VAL[] PROGMEM = "Win";
+#define SW_MODE_WIN_NAME FF(SW_MODE_WIN_VAL)
+const char SW_MODE_GNOME_VAL[] PROGMEM = "Gnome";
+#define SW_MODE_GNOME_NAME FF(SW_MODE_GNOME_VAL)
+
+#define SW_MODE_DEFAULT true // По-умолчанию зеленый режим - это windows
+
 // Параметры конфигурации
 typedef struct {
   uint8_t  noValue; // Флаг того (==1), что не было сохраненных значений 
   
   uint16_t keyCode[16]; // Коды выводимых символов [0..15] (unicode 2 байта)
+  uint8_t is_green_win; // Флаг указывающий использовать win-отправку, когда переключатель зеленый (red - всегда html, а yellow - что осталось)
 } flashcfg;
 
 bool cfg_init(flashcfg &cfg); //Подготовиться к работе с конфигом и загрузить его, а если надо и прописать по умолчанию (вернет false - если по умолчанию)

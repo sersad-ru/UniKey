@@ -39,6 +39,8 @@ void cfg_reset(flashcfg &cfg) {
   cfg.keyCode[14] = KEY_CODE_14_DEFAULT;
   cfg.keyCode[15] = KEY_CODE_15_DEFAULT;
 
+  cfg.is_green_win = SW_MODE_DEFAULT;
+
   cfg.noValue = 0;//Выставляем флаг, что данные установлены
   cfg_save(cfg); //сохраняем значения
 }//cfg_reset
@@ -51,4 +53,5 @@ void cfg_print(Print &p, flashcfg &cfg){
     ssHexPrint(p, cfg.keyCode[i]);
     ssMultiPrintln(p, " (", cfg.keyCode[i], ")");
   }//for 
+  ssMultiPrintln(p, SW_MODE_NAME, (cfg.is_green_win) ? SW_MODE_WIN_NAME : SW_MODE_GNOME_NAME);
 }//cfg_print

@@ -1,22 +1,45 @@
+#include "mode_sw.h"
 #include "app.h"
 #include <ssMultiPrint.h>
 #include <ssStrPrintf.h>
 #include <Keyboard.h>
 
+
+const char ERROR_IN_CMD_VAL[] PROGMEM = "*** Error in command: \"";
+#define ERROR_IN_CMD_NAME FF(ERROR_IN_CMD_VAL)
+
+/*
+// Информация о кнопке
+typedef struct {
+  uint8_t num;  // Номер кнопки (0..15)
+  uint16_t val; // Отправляемый код
+}CMDKey;
+*/
+
+// Список команд
+typedef enum {
+  CMD_HELP  = 'h', // h - справка по командам
+  CMD_INFO  = '?', // ? - информация о билде, название и конфигурация
+  CMD_RESET = '&', // & - сброс к настройкам по умолчанию (единственным аргументом должна быть "F" или "f". т.е. "&F")
+  CMD_GREEN = 'g', // g - установить тип вывода для зеленого состояния индикатора g=w | g=g
+  CMD_KEY   = 'k', // k - кнопка k1=125
+  CMD_TEST  = 't', // t - включить / выключить вывод событий в UART (не сохраняется в настройках)
+} CMDCommands;
+
 App::App(flashcfg * c, Keypad * k, ModeSW * s, CMD * cmd){
+  char cmdArr[] = {CMD_HELP, CMD_INFO, CMD_RESET, CMD_GREEN, CMD_KEY, CMD_TEST}; // Настраиваем список команд
   _cfg = c;
   _keys = k;
   _sw = s;
   _cmd = cmd;
+  _cmd->setCommands(cmdArr, arraySize(cmdArr));
 }//App
 
 
 // Выполнение периодических заданий
 void App::run(){
   _processKeys(); // Отратабываем нажатие кнопок
-  //_cmd->exec(); // Отрабатываем комады
-  
-
+  _processCmd(); // Отрабатываем комады
 }//run 
 
 
@@ -26,49 +49,78 @@ void App::_processKeys(){
   uint16_t val = _keys->getKey(); // Получаем очередную нажатую кнопку
   if(val == KP_NONE) return; // Ничего не нажато
 
-  ssMultiPrint(Serial, KEY_CODE_NAME, KP_NUM(val), " = ");
-  ssHexPrint(Serial, _cfg->keyCode[KP_NUM(val)]);
-  ssMultiPrintln(Serial, " (", _cfg->keyCode[KP_NUM(val)], ")");
-
-  //_sendHTML(_cfg->keyCode[KP_NUM(val)]);
-  //_sendGnome(_cfg->keyCode[KP_NUM(val)]);
-  _sendWin(_cfg->keyCode[KP_NUM(val)]);
+  // Выбираем метод отправки символа
+  switch(_sw->getState()){
+    case SW_GREEN: (_cfg->is_green_win) ? _sendWin(KP_NUM(val)) : _sendGnome(KP_NUM(val)); break;
+    case SW_YELLOW: (_cfg->is_green_win) ? _sendGnome(KP_NUM(val)) : _sendWin(KP_NUM(val)); break;
+    case SW_RED: _sendHTML(KP_NUM(val)); break;
+  }//switch
 }//_processKeys
 
 
 // Отправить последовательность для HTML
-void App::_sendHTML(const uint16_t code){
-  Keyboard.print("&#");
-  Keyboard.print(code);
+void App::_sendHTML(const uint8_t key_num){
+  if(_test_mode){ // В тестовом режиме только выводим и ничего не посылаем
+    _printTest(F("HTML"), key_num);
+    return;
+  } //if 
+
+  Keyboard.print("&#"); // &#code;
+  Keyboard.print(_cfg->keyCode[key_num]);
   Keyboard.print(";");
 }//_sendHTML
 
 
 // Отправить последовательность для гнома
-void App::_sendGnome(const uint16_t code){
-  Keyboard.press(KEY_LEFT_CTRL);
+void App::_sendGnome(const uint8_t key_num){
+  if(_test_mode){ // В тестовом режиме только выводим и ничего не посылаем
+    _printTest(F("Gnome"), key_num);
+    return;
+  } //if 
+
+  Keyboard.press(KEY_LEFT_CTRL); //<Ctrl>+<Shift>+<u>
   Keyboard.press(KEY_LEFT_SHIFT);
   Keyboard.print("u");
   Keyboard.release(KEY_LEFT_SHIFT);
   Keyboard.release(KEY_LEFT_CTRL);
-  ssHexPrint(Keyboard, code, false);
+  ssHexPrint(Keyboard, _cfg->keyCode[key_num], false);
   Keyboard.write(KEY_RETURN);
 }//_sendGnome
 
 
 // Отправить последовательность для винды
-void App::_sendWin(const uint16_t code){
+void App::_sendWin(const uint8_t key_num){
+  if(_test_mode){ // В тестовом режиме только выводим и ничего не посылаем
+    _printTest(F("Win"), key_num);
+    return;
+  } //if 
+  //Трансляция цифр в коды цифровой клавиатуры
   const uint8_t dig2kp[] = {KEY_KP_0, KEY_KP_1, KEY_KP_2, KEY_KP_3, KEY_KP_4, KEY_KP_5, KEY_KP_6, KEY_KP_7, KEY_KP_8, KEY_KP_9};
   char buf[7] = "000000"; // Ведущий 0 + 5 цифр + завершающий ноль
-  utoa(code, &buf[1], 10); // Оставляем ведущий 0 для винды
-  Serial.println(buf);
-  for(uint8_t i = 0; buf[i]; i++){
-    Serial.println(dig2kp[buf[i] - '0']); // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  }
-  // Keyboard.press(KEY_LEFT_ALT);
-  //   //Keyboard.write(KEY_KP_0);
-  //   Keyboard.write(KEY_KP_1);
-  //   Keyboard.write(KEY_KP_6);
-  //   Keyboard.write(KEY_KP_9);
-  // Keyboard.release(KEY_LEFT_ALT);
+  utoa(_cfg->keyCode[key_num], &buf[1], 10); // Оставляем ведущий 0 для винды
+  Keyboard.press(KEY_LEFT_ALT); //<Alt>+0+<Keypad>
+  for(uint8_t i = 0; buf[i]; i++) Keyboard.write(dig2kp[buf[i] - '0']);
+  Keyboard.release(KEY_LEFT_ALT);
 }//_sendWin
+
+
+// Вывести тестовую информацию
+void App::_printTest(const __FlashStringHelper* mode, uint8_t key_num){
+  if(!Serial.availableForWrite()) return; // Некуда писать  
+  ssMultiPrint(Serial, F("Mode is: \""), mode, "\". Presed ", KEY_CODE_NAME, key_num, " = ");
+  ssHexPrint(Serial, _cfg->keyCode[key_num]);
+  ssMultiPrintln(Serial, " (", _cfg->keyCode[key_num], ")");
+}//_printTest
+
+
+// Отработать команды
+void App::_processCmd(){
+  _cmd->exec(); // Отрабатываем комады
+  switch(_cmd->getCommand()){
+    case CMD::CMD_NONE: break; // Нет команды
+    case CMD::CMD_ERROR: ssMultiPrintln(Serial, ERROR_IN_CMD_NAME, (char*)(_cmd -> getLastArgs() - 1), "\""); break;
+    case CMD_HELP: Serial.println("Help"); break;
+    default: ssMultiPrintln(Serial, F("!!! Can't find event for this command: \""), (char*)(_cmd -> getLastArgs() - 1), "\""); break; // Необработанная команда
+  }//switch
+}//_processCmd
+
