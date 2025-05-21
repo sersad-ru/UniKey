@@ -30,11 +30,11 @@ const char KEY_CODE_VAL[] PROGMEM = "Key_";
 #define KEY_CODE_15_DEFAULT 0x0046 // "F"
 
 // Режим переключателя 
-const char SW_MODE_VAL[] PROGMEM = "Green is ";
+const char SW_MODE_VAL[] PROGMEM = "Green light for ";
 #define SW_MODE_NAME FF(SW_MODE_VAL)
-const char SW_MODE_WIN_VAL[] PROGMEM = "Win";
+const char SW_MODE_WIN_VAL[] PROGMEM = "WIN";
 #define SW_MODE_WIN_NAME FF(SW_MODE_WIN_VAL)
-const char SW_MODE_GNOME_VAL[] PROGMEM = "Gnome";
+const char SW_MODE_GNOME_VAL[] PROGMEM = "GNOME";
 #define SW_MODE_GNOME_NAME FF(SW_MODE_GNOME_VAL)
 
 #define SW_MODE_DEFAULT true // По-умолчанию зеленый режим - это windows
@@ -52,3 +52,6 @@ bool cfg_load(flashcfg &cfg); //Загрузить конфиг из флеша 
 void cfg_save(flashcfg &cfg); //Сохранить конфиг во флеш
 void cfg_reset(flashcfg &cfg); //Сбросить конфиг на значения по умолчанию
 void cfg_print(Print &p, flashcfg &cfg); // Вывести настройки
+
+void cfg_print_key(Print &p, flashcfg &cfg, const uint8_t key_num); // Вывести параметры кнопки
+void cfg_print_sw(Print &p, flashcfg &cfg); // Вывести параметры переключателя

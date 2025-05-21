@@ -6,10 +6,11 @@
 #include <Arduino.h>
 #include <ssExecutor.h>
 
+//#define CMD_CASE_SENSITIVE // Учитывать регистр при анализе команд
 #define CMD_BUF_SIZE 32 // Размер буфера для приема команд с аргументами
 #define CMD_MAX_COMMANDS 8 // Максимальное количество обрабатываемых команд
 
-// !!!!!!!!!!!!!!!!!!! TODO: CaseSentensitive!!!!!!!!!!!!!!!!!
+// !!!!!!!!!!!!!!!!!!! TODO: CaseSensitive
 
 class CMD : public ssExecutor {
   public:
@@ -19,13 +20,13 @@ class CMD : public ssExecutor {
     CMD(Serial_ &ser);
 
     // Установить список поддерживаемых команд // !!!!!!!!!!!!!!!!!!! TODO: CaseSentensitive!!!!!!!!!!!!!!!!!
-    void setCommands(char cmd_list[], const uint8_t list_size){for(_cmd_size = 0; (_cmd_size < list_size) && (_cmd_size < CMD_MAX_COMMANDS); _cmd_size++) _cmd_list[_cmd_size] = tolower(cmd_list[_cmd_size]);};
+    void setCommands(char cmd_list[], const uint8_t list_size);
 
     // Возвращает последнюю команду cбрасываея ее на CMD_NONE. Так же может вернуть CMD_ERROR и CMD_NONE
     char getCommand(){char cmd = _last_command; _last_command = CMD_NONE; return cmd;};
 
     // Вернуть ссылку на строку аргументов
-    char* getLastArgs(){return (char*)(_buf + 1);};
+    char* getArgs(){return (char*)(_buf + 1);};
 
     // Периодическая работа
     void run() override {_read_command();};

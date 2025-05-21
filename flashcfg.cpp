@@ -47,11 +47,21 @@ void cfg_reset(flashcfg &cfg) {
 
 
 void cfg_print(Print &p, flashcfg &cfg){
-  for(uint8_t i = 0; i < arraySize(cfg.keyCode); i++){
-    ssMultiPrint(p, KEY_CODE_NAME, i, ": ");
-    if(i < 10) p.print(' ');
-    ssHexPrint(p, cfg.keyCode[i]);
-    ssMultiPrintln(p, " (", cfg.keyCode[i], ")");
-  }//for 
-  ssMultiPrintln(p, SW_MODE_NAME, (cfg.is_green_win) ? SW_MODE_WIN_NAME : SW_MODE_GNOME_NAME);
+  for(uint8_t i = 0; i < arraySize(cfg.keyCode); i++) cfg_print_key(p, cfg, i);
+  cfg_print_sw(p, cfg);
 }//cfg_print
+
+
+// Вывести параметры кнопки
+void cfg_print_key(Print &p, flashcfg &cfg, const uint8_t key_num){
+  ssMultiPrint(p, KEY_CODE_NAME, key_num, ": ");
+  if(key_num < 10) p.print(' ');
+  ssHexPrint(p, cfg.keyCode[key_num]);
+  ssMultiPrintln(p, " (", cfg.keyCode[key_num], ")");
+}//cfg_print_key
+
+
+ // Вывести параметры переключателя
+void cfg_print_sw(Print &p, flashcfg &cfg){
+  ssMultiPrintln(p, SW_MODE_NAME, (cfg.is_green_win) ? SW_MODE_WIN_NAME : SW_MODE_GNOME_NAME);
+}//cfg_print_sw

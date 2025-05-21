@@ -1,5 +1,7 @@
-#include "mode_sw.h"
 #include "app.h"
+#include "version.h"
+#include "mode_sw.h"
+#include <ssBuildID.h>
 #include <ssMultiPrint.h>
 #include <ssStrPrintf.h>
 #include <Keyboard.h>
@@ -7,6 +9,8 @@
 
 const char ERROR_IN_CMD_VAL[] PROGMEM = "*** Error in command: \"";
 #define ERROR_IN_CMD_NAME FF(ERROR_IN_CMD_VAL)
+const char CFG_SAVED_VAL[] PROGMEM = "Config saved.";
+#define CFG_SAVED_NAME FF(CFG_SAVED_VAL)
 
 /*
 // Информация о кнопке
@@ -21,7 +25,7 @@ typedef enum {
   CMD_HELP  = 'h', // h - справка по командам
   CMD_INFO  = '?', // ? - информация о билде, название и конфигурация
   CMD_RESET = '&', // & - сброс к настройкам по умолчанию (единственным аргументом должна быть "F" или "f". т.е. "&F")
-  CMD_GREEN = 'g', // g - установить тип вывода для зеленого состояния индикатора g=w | g=g
+  CMD_GREEN = 'g', // g - переключить тип вывода для зеленого состояния индикатора Win/Gnome
   CMD_KEY   = 'k', // k - кнопка k1=125
   CMD_TEST  = 't', // t - включить / выключить вывод событий в UART (не сохраняется в настройках)
 } CMDCommands;
@@ -116,11 +120,83 @@ void App::_printTest(const __FlashStringHelper* mode, uint8_t key_num){
 // Отработать команды
 void App::_processCmd(){
   _cmd->exec(); // Отрабатываем комады
+  uint8_t key_num = 0; // Номер кнопки
+  uint16_t key_code = 0; // Код символа
   switch(_cmd->getCommand()){
     case CMD::CMD_NONE: break; // Нет команды
-    case CMD::CMD_ERROR: ssMultiPrintln(Serial, ERROR_IN_CMD_NAME, (char*)(_cmd -> getLastArgs() - 1), "\""); break;
-    case CMD_HELP: Serial.println("Help"); break;
-    default: ssMultiPrintln(Serial, F("!!! Can't find event for this command: \""), (char*)(_cmd -> getLastArgs() - 1), "\""); break; // Необработанная команда
+
+    case CMD::CMD_ERROR: ssMultiPrintln(Serial, ERROR_IN_CMD_NAME, _cmd -> getArgs() - 1, "\""); break;
+
+    case CMD_TEST: // Переключение тестового режима
+      _test_mode = ! _test_mode;
+      ssMultiPrintln(Serial, F("Test mode: "), (_test_mode) ? F("ON") : F("OFF")); 
+    break;
+
+    case CMD_GREEN: // Режим для зеленого состояния переключателя. HTML - всегда на красном, а другой на желтый
+      _cfg->is_green_win = ! _cfg->is_green_win;
+      cfg_print_sw(Serial, *_cfg); // Вывести состояние переключателя
+      cfg_save(*_cfg); //сохраняем значения
+      Serial.println(CFG_SAVED_NAME);
+    break;
+
+    case CMD_KEY: // Присваивание кода кнопке
+      // Получаем номер и код кнопки
+      if(sscanf(_cmd->getArgs(), "%hhu = %hi", &key_num, &key_code) != 2){
+        ssMultiPrintln(Serial, ERROR_IN_CMD_NAME, _cmd->getArgs() - 1, "\""); 
+        break;
+      }//if
+      // TODO: проверить на номер кнопки
+      // if(key.num > BTN_COUNT - 1){ // Тот ли номер кнопки
+      //   _printIllegalKeyNum(key.num);      
+      //   break;
+      // }//if
+      // ????????????????????????????
+      // if(!Codes::checkCode(key.val)){ // То ли значение кнопки
+      //   ssMultiPrintln(Serial, F("*** Error: Illegal key code: "), key.val, F(" in command \""), (char*)(_cmd -> getLastArgs() - 1), "\"");
+      //   Codes::printCodeList(Serial);
+      //   break; 
+      // }//if
+
+      _cfg->keyCode[key_num] = key_code;
+      cfg_print_key(Serial, *_cfg, key_num);
+      //cfg_save(*_cfg); //сохраняем значения
+      Serial.println(CFG_SAVED_NAME);
+    break;
+
+    case CMD_RESET: // Сброс к настройкам по умолчанию
+      if(_cmd->getArgs()[0] != 'f') {
+        ssMultiPrintln(Serial, ERROR_IN_CMD_NAME, _cmd->getArgs() - 1, "\""); 
+        break;
+      }//if 
+      cfg_reset(*_cfg);
+      Serial.println(F("Reset to defaults."));
+    break;
+
+    case CMD_INFO: // Информация о билде, название и конфигурация
+      ssMultiPrintln(Serial, "\n", APP_NAME, APP_VER, APP_COPYRIGHT, APP_SERSAD);
+      ssMultiPrintln(Serial, APP_BUILD_ID, BUILD_ID, "\n");
+      cfg_print(Serial, *_cfg);
+      ssMultiPrintln(Serial, F("Test mode: "), (_test_mode) ? F("ON") : F("OFF"));
+      Serial.println(F("Use \"h\"\t- for help."));
+      Serial.println();
+    break;
+
+    case CMD_HELP: // Справка
+      Serial.println(F("--- HELP ---"));
+      Serial.println(F("h\t- this help"));
+      Serial.println(F("?\t- show version, build number and current config"));
+      Serial.println(F("&F\t- reset to system defaults and save config"));
+      Serial.println(F("t\t- turn on / off test mode (only console print and no real action)"));
+      Serial.println(F("g\t- swap mode for green light. Win/Gnome"));
+      ssMultiPrintln(Serial, F("kN=C\t- key settings: N-key number[0.."), arraySize(_cfg->keyCode) - 1, F("], C - key code. \"k0=169\" - for '©' (copyright) symbol on key 0"));
+      Serial.println(F("Key mapping: "));
+      Serial.println(F("[0]\t[1]\t[2]\t[3]"));
+      Serial.println(F("[4]\t[5]\t[6]\t[7]\t <mode switch>"));
+      Serial.println(F("[8]\t[9]\t[10]\t[11]\t <mode LED>"));
+      Serial.println(F("[12]\t[13]\t[14]\t[15]"));
+      Serial.println(F("--- --- ---"));
+    break;
+    default: ssMultiPrintln(Serial, F("!!! Can't find event for this command: \""), _cmd -> getArgs() - 1, "\""); break; // Необработанная команда
   }//switch
 }//_processCmd
 

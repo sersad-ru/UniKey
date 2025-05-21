@@ -55,8 +55,8 @@ void setup() {
   cfg_reset(cfg); //Принудительно сбрасываем значения
   if(Serial.availableForWrite()) Serial.println(F("\nConfig reseted."));
 #endif
-  if(Serial.availableForWrite()) cfg_print(Serial, cfg);
-  Serial.println();
+  //if(Serial.availableForWrite()) cfg_print(Serial, cfg);
+  //Serial.println();
 
 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!111
   cfg.keyCode[0] = 0x221E;

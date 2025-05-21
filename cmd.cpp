@@ -9,6 +9,17 @@ CMD::CMD(Serial_ &ser) : ssExecutor(CMD_READ_DELAY_MS){
 }// CMD
 
 
+// Установить список поддерживаемых команд // !!!!!!!!!!!!!!!!!!! TODO: CaseSentensitive!!!!!!!!!!!!!!!!!
+void CMD::setCommands(char cmd_list[], const uint8_t list_size){
+  for(_cmd_size = 0; (_cmd_size < list_size) && (_cmd_size < CMD_MAX_COMMANDS); _cmd_size++) 
+#ifdef CMD_CASE_SENSITIVE  
+  _cmd_list[_cmd_size] = cmd_list[_cmd_size];
+#else
+  _cmd_list[_cmd_size] = tolower(cmd_list[_cmd_size]);
+#endif
+}//setCommands
+
+
 // Попытаться прочесть команду
 void CMD::_read_command(){
   // Читаем (копим) строку
@@ -30,8 +41,11 @@ void CMD::_read_command(){
   i = 0;
 
   // Анализируем, что начитали
-  // !!!!!!!!!!!!!!!!!!! TODO: CaseSentensitive!!!!!!!!!!!!!!!!!
+#ifdef CMD_CASE_SENSITIVE  
+  char cmd = (char)_buf[0]; // Команда
+#else
   char cmd = tolower((char)_buf[0]); // Команда
+#endif
 
   // Проверяем, есть ли команда в списке
   _last_command = CMD_ERROR; // Считаем, что нет
