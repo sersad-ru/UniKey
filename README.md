@@ -16,8 +16,8 @@ This is a little keypad to enter unicode symbols. It emulates `<Alt>+0+<Keypad>`
 
 3-position switch helps to choose the mode. 
 * First position (green LED) uses (by default) `Windows` mode.
-* Second position (red LED) uses `Gnome` mode.
-* Middle position (yellow LED) uses `HTML` mode.
+* Second position (red LED) uses `HTML` mode.
+* Middle position (yellow LED) uses `Gnome` mode.
 
 Default behavior of switch and symbol codes for keys can be configured through [Serial port](#Serial-configuration).
 
@@ -42,7 +42,7 @@ This device emulates a HID keyboard. When you press a key it emulates key sequen
 >*Note. When using this device with `Gnome`, make sure that the sequence `<Ctrl>+<Shift>+<u>` is not used by the active application for its own purposes.*
 
 ### Dependencies
-1. [Arduino `Keyboard.h` library](https://docs.arduino.cc/libraries/keyboard/)
+1. [Arduino <Keyboard.h> library](https://docs.arduino.cc/libraries/keyboard/)
 2. [ssMultiPrint libraty](https://github.com/sersad-ru/ssMultiPrint)
 3. [ssExecutor library](https://github.com/sersad-ru/ssExecutor)
 
