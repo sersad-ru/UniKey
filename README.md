@@ -46,9 +46,10 @@ This device emulates a HID keyboard. When you press a key it emulates key sequen
 2. [ssMultiPrint libraty](https://github.com/sersad-ru/ssMultiPrint)
 3. [ssExecutor library](https://github.com/sersad-ru/ssExecutor)
 
-In addition to emulating HID devices, UniKey also sends and receives messages via a COM port. You can connect to it using any COM terminal program. Port specification: `9600 8N1`. This connection can be used to configure devise settings.
 
 ### Serial configuration
+In addition to emulating HID devices, UniKey also sends and receives messages via a COM port. You can connect to it using any COM terminal program. Port specification: `9600 8N1`. This connection can be used to configure devise settings.
+
 Available configuration commands are:
 
 |Command|Params|Description|
