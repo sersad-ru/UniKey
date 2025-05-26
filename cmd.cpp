@@ -9,7 +9,7 @@ CMD::CMD(Serial_ &ser) : ssExecutor(CMD_READ_DELAY_MS){
 }// CMD
 
 
-// Установить список поддерживаемых команд // !!!!!!!!!!!!!!!!!!! TODO: CaseSentensitive!!!!!!!!!!!!!!!!!
+// Установить список поддерживаемых команд
 void CMD::setCommands(char cmd_list[], const uint8_t list_size){
   for(_cmd_size = 0; (_cmd_size < list_size) && (_cmd_size < CMD_MAX_COMMANDS); _cmd_size++) 
 #ifdef CMD_CASE_SENSITIVE  

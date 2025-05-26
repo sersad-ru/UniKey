@@ -1,3 +1,4 @@
+#include "flashcfg.h"
 #include "app.h"
 #include "version.h"
 #include "mode_sw.h"
@@ -11,14 +12,6 @@ const char ERROR_IN_CMD_VAL[] PROGMEM = "*** Error in command: \"";
 #define ERROR_IN_CMD_NAME FF(ERROR_IN_CMD_VAL)
 const char CFG_SAVED_VAL[] PROGMEM = "Config saved.";
 #define CFG_SAVED_NAME FF(CFG_SAVED_VAL)
-
-/*
-// Информация о кнопке
-typedef struct {
-  uint8_t num;  // Номер кнопки (0..15)
-  uint16_t val; // Отправляемый код
-}CMDKey;
-*/
 
 // Список команд
 typedef enum {
@@ -100,7 +93,7 @@ void App::_sendWin(const uint8_t key_num){
   } //if 
   //Трансляция цифр в коды цифровой клавиатуры
   const uint8_t dig2kp[] = {KEY_KP_0, KEY_KP_1, KEY_KP_2, KEY_KP_3, KEY_KP_4, KEY_KP_5, KEY_KP_6, KEY_KP_7, KEY_KP_8, KEY_KP_9};
-  char buf[7] = "000000"; // Ведущий 0 + 5 цифр + завершающий ноль
+  char buf[12] = "000000"; // Ведущий 0 + 10 цифр + завершающий ноль
   utoa(_cfg->keyCode[key_num], &buf[1], 10); // Оставляем ведущий 0 для винды
   Keyboard.press(KEY_LEFT_ALT); //<Alt>+0+<Keypad>
   for(uint8_t i = 0; buf[i]; i++) Keyboard.write(dig2kp[buf[i] - '0']);
@@ -121,11 +114,11 @@ void App::_printTest(const __FlashStringHelper* mode, uint8_t key_num){
 void App::_processCmd(){
   _cmd->exec(); // Отрабатываем комады
   uint8_t key_num = 0; // Номер кнопки
-  uint16_t key_code = 0; // Код символа
+  keyCodeType key_code = 0; // Код символа (читаем int32, поскольку sscanf не умеет принимать hex и dec для unsigned)
   switch(_cmd->getCommand()){
     case CMD::CMD_NONE: break; // Нет команды
 
-    case CMD::CMD_ERROR: ssMultiPrintln(Serial, ERROR_IN_CMD_NAME, _cmd -> getArgs() - 1, "\""); break;
+    case CMD::CMD_ERROR: ssMultiPrintln(Serial, ERROR_IN_CMD_NAME, _cmd->getArgs() - 1, "\""); break;
 
     case CMD_TEST: // Переключение тестового режима
       _test_mode = ! _test_mode;
@@ -141,25 +134,19 @@ void App::_processCmd(){
 
     case CMD_KEY: // Присваивание кода кнопке
       // Получаем номер и код кнопки
-      if(sscanf(_cmd->getArgs(), "%hhu = %hi", &key_num, &key_code) != 2){
+      if(sscanf(_cmd->getArgs(), "%hhu = %li", &key_num, &key_code) != 2){
         ssMultiPrintln(Serial, ERROR_IN_CMD_NAME, _cmd->getArgs() - 1, "\""); 
         break;
       }//if
-      // TODO: проверить на номер кнопки
-      // if(key.num > BTN_COUNT - 1){ // Тот ли номер кнопки
-      //   _printIllegalKeyNum(key.num);      
-      //   break;
-      // }//if
-      // ????????????????????????????
-      // if(!Codes::checkCode(key.val)){ // То ли значение кнопки
-      //   ssMultiPrintln(Serial, F("*** Error: Illegal key code: "), key.val, F(" in command \""), (char*)(_cmd -> getLastArgs() - 1), "\"");
-      //   Codes::printCodeList(Serial);
-      //   break; 
-      // }//if
+      // Проверяем номер кнопки
+      if(key_num > arraySize(_cfg->keyCode) - 1){ // Тот ли номер кнопки
+        ssMultiPrintln(Serial, F("*** Error: Illegal key number: "), key_num, F(" (not in [1.."), arraySize(_cfg->keyCode) - 1, F("]) in command \""), (char*)(_cmd->getArgs() - 1), "\""); 
+        break;
+      }//if
 
       _cfg->keyCode[key_num] = key_code;
       cfg_print_key(Serial, *_cfg, key_num);
-      //cfg_save(*_cfg); //сохраняем значения
+      cfg_save(*_cfg); //сохраняем значения
       Serial.println(CFG_SAVED_NAME);
     break;
 
@@ -196,7 +183,7 @@ void App::_processCmd(){
       Serial.println(F("[12]\t[13]\t[14]\t[15]"));
       Serial.println(F("--- --- ---"));
     break;
-    default: ssMultiPrintln(Serial, F("!!! Can't find event for this command: \""), _cmd -> getArgs() - 1, "\""); break; // Необработанная команда
+    default: ssMultiPrintln(Serial, F("!!! Can't find event for this command: \""), _cmd->getArgs() - 1, "\""); break; // Необработанная команда
   }//switch
 }//_processCmd
 

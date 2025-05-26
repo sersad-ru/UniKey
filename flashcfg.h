@@ -40,10 +40,12 @@ const char SW_MODE_GNOME_VAL[] PROGMEM = "GNOME";
 #define SW_MODE_DEFAULT true // По-умолчанию зеленый режим - это windows
 
 // Параметры конфигурации
+typedef int32_t keyCodeType;
+
 typedef struct {
   uint8_t  noValue; // Флаг того (==1), что не было сохраненных значений 
   
-  uint16_t keyCode[16]; // Коды выводимых символов [0..15] (unicode 2 байта)
+  keyCodeType keyCode[16]; // Коды выводимых символов [0..15] (unicode 2 байта)
   uint8_t is_green_win; // Флаг указывающий использовать win-отправку, когда переключатель зеленый (red - всегда html, а yellow - что осталось)
 } flashcfg;
 

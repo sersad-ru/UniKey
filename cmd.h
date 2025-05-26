@@ -19,7 +19,7 @@ class CMD : public ssExecutor {
 
     CMD(Serial_ &ser);
 
-    // Установить список поддерживаемых команд // !!!!!!!!!!!!!!!!!!! TODO: CaseSentensitive!!!!!!!!!!!!!!!!!
+    // Установить список поддерживаемых команд
     void setCommands(char cmd_list[], const uint8_t list_size);
 
     // Возвращает последнюю команду cбрасываея ее на CMD_NONE. Так же может вернуть CMD_ERROR и CMD_NONE

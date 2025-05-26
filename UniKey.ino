@@ -3,10 +3,11 @@
 * v 1.0
 * (c)04.05.2025 by sersad
 * 04.05.2025
+* 26.05.2025
 */
 
 /*
-* Board: Arduino AVR Boards / Arduino Micro (Leonardo)
+* Board: Arduino AVR Boards / Arduino Micro (Leonardo) 
 */
 
 #include <ssBuildID.h>
@@ -19,10 +20,7 @@
 #include "cmd.h"
 #include "app.h"
 
-#include <Keyboard.h>
-
-
-//#define RESET_FLASH_CFG //Сбросить конфигурацию
+//#define RESET_FLASH_CFG //Сбросить конфигурацию 
 
 // Конфиг
 flashcfg cfg;
@@ -55,17 +53,6 @@ void setup() {
   cfg_reset(cfg); //Принудительно сбрасываем значения
   if(Serial.availableForWrite()) Serial.println(F("\nConfig reseted."));
 #endif
-  //if(Serial.availableForWrite()) cfg_print(Serial, cfg);
-  //Serial.println();
-
-//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!111
-  cfg.keyCode[0] = 0x221E;
-  cfg.keyCode[1] = 169;
-  //char arr[] = {'1', '2', '3', '4', '5', '6', '7', '8', '9'}; 
-  //char arr[] = {'h', '?', 'i'}; 
-  //cmd.setCommands(arr, arraySize(arr));
-
-//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!111
 
   if(Serial.availableForWrite()) ssMultiPrintln(Serial, APP_NAME, F("is ready."));  
 }//setup
