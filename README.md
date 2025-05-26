@@ -12,7 +12,7 @@ Additional keyboard for unicode characters.
 
 ## Overview
 
-This is a little keypad to enter unicode symbols. It emulates `<Alt>+0+<Keypad>` sequence for Windows and `<Ctrl>+<Shift>+<u>` for Gnome. Of course it can send HTML `&#`-codes. 
+This is a little keypad which helps to enter unicode symbols. It emulates `<Alt>+0+<Keypad>` sequence for Windows and `<Ctrl>+<Shift>+<u>` for Gnome. Of course it can send HTML `&#`-codes. 
 
 3-position switch helps to choose the mode. 
 * First position (`green` LED) used (by default) for `Windows` mode.
