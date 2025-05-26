@@ -48,7 +48,7 @@ This device emulates a HID keyboard. When you press a key it emulates key sequen
 
 In addition to emulating HID devices, UniKey also sends and receives messages via a COM port. You can connect to it using any COM terminal program. Port specification: `9600 8N1`. This connection can be used to configure devise settings.
 
-### Serial-configuration
+### Serial configuration
 Available configuration commands are:
 
 |Command|Params|Description|
@@ -62,7 +62,6 @@ Available configuration commands are:
 
 ### Key layout
 ```
-                     <type-c>
  [0]  [1]  [2]  [3]
  [4]  [5]  [6]  [7]  <mode switch>
  [8]  [9] [10] [11]  <red-green LED>
