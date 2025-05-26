@@ -34,7 +34,6 @@
 #define A9 A9
 #define A10 A10
 
-
 // UART
 #define RXD 0
 #define TXD 1

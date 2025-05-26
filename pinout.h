@@ -14,7 +14,7 @@
 #define SW_T D16  // Положение вверх
 #define SW_B D10  // Положение вниз
 
-// Кнопки
+// -- Кнопки -- 
 // Столбцы
 #define COL_1 D6
 #define COL_2 D7
