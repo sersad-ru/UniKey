@@ -21,7 +21,7 @@ This is a little keypad which helps to enter unicode symbols. It emulates `<Alt>
 
 Default behavior of switch and symbol codes for keys can be configured through [Serial port](#Serial-configuration).
 
-The devise implements HID protocol and needs no drivers for your OS.
+The device implements HID protocol and needs no drivers for your OS.
 
 
 ## Hardware
