@@ -60,7 +60,15 @@ Available configuration commands are:
 |`g`|none|Swap `Windows` and `Gnome` mode between the `First` (green LED) and `Middle` (yellow LED) position of the mode-switch. The `Second` position (red LED) is always used for `HTML` mode.|
 |`k`|`X=C`|Assign the code `C` to the `X` key. Example: `k0=169`. The code **169** (unicode symbol `©`) will be assigned to the key **0**.|
 
+### Key layout
+```
+                     <type-c>
+ [0]  [1]  [2]  [3]
+ [4]  [5]  [6]  [7]  <mode switch>
+ [8]  [9] [10] [11]  <red-green LED>
+[12] [13] [14] [15] 
 
+```
 
 ## History
 * 1.0 - First stable release. 2025-05-26.
