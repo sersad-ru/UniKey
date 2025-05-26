@@ -19,4 +19,33 @@ This is a little keypad to enter unicode symbols. It emulates `<Alt>+0+<Keypad>`
 * Second position (red LED) uses `Gnome` mode.
 * Middle position (yellow LED) uses `HTML` mode.
 
+Default behavior of switch and symbol codes for keys can be configured through [Serial port](#Serial-configuration).
+
 The devise implements HID protocol and needs no drivers for your OS.
+
+
+## Hardware
+The device is based on:
+*  `Arduino Pro Micro ATMega32U4` 
+*  16 keys width diodes
+*  3-mode side switch
+*  Red-Green control LED
+
+**Schematic image**
+
+**No case image**
+
+
+## Software
+This device emulates a HID keyboard. When you press a key it emulates key sequence (depended on mode-switch) to send the unicode symbol to your OS.
+
+>*Note. When using this device with `Gnome`, make sure that the sequence `<Ctrl>+<Shift>+<u>` is not used by the active application for its own purposes.*
+
+### Dependencies
+1. [Arduino `Keyboard.h` library](https://docs.arduino.cc/libraries/keyboard/)
+2. [ssMultiPrint libraty](https://github.com/sersad-ru/ssMultiPrint)
+3. [ssExecutor library](https://github.com/sersad-ru/ssExecutor)
+
+In addition to emulating HID devices, Agata also sends and receives messages via a COM port. You can connect to it using any COM terminal program. Port specification: `9600 8N1`. This connection can be used to configure devise settings.
+
+### Serial-configuration

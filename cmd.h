@@ -10,8 +10,6 @@
 #define CMD_BUF_SIZE 32 // Размер буфера для приема команд с аргументами
 #define CMD_MAX_COMMANDS 8 // Максимальное количество обрабатываемых команд
 
-// !!!!!!!!!!!!!!!!!!! TODO: CaseSensitive
-
 class CMD : public ssExecutor {
   public:
     static const int8_t CMD_NONE  = 0; // Нет команды
