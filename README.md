@@ -37,7 +37,7 @@ The device is based on:
 
 
 ## Software
-This device emulates a HID keyboard. When you press a key it emulates a key sequence (depended on mode-switch) to send the unicode symbol to your OS.
+This device emulates a HID keyboard. When you press a key it emulates the key sequence (depended on mode-switch) to send the unicode symbol to your OS.
 
 >*Note. When using this device with `Gnome`, make sure that the sequence `<Ctrl>+<Shift>+<u>` is not used by the active application for its own purposes.*
 
