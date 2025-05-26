@@ -57,7 +57,7 @@ Available configuration commands are:
 |`h`|none|Get the list of available commands|
 |`?`|none|Get the version information and current configuration|
 |`&`|`F`|Reset the configuration to defaults. Example: `&F`|
-|`t`|none|Turn on or off debug messages to the COM-port. No key-sequence will be sent to the PC.|
+|`t`|none|Turn on or off the test mode. In the test mode key numbers and unicode codes will be send only to COM-port. No key-sequence will be sent to the PC.|
 |`g`|none|Swap `Windows` and `Gnome` mode between the `First` (`green` LED) and `Middle` (`yellow` LED) position of the mode-switch. The `Second` position (`red` LED) is always used for `HTML` mode.|
 |`k`|`X=C`|Assign the code `C` to the `X` key. Example: `k0=169`. The code **169** (unicode symbol `©`) will be assigned to the key **0**.|
 
