@@ -33,7 +33,7 @@ void ModeSW::run(){
 
 // Прочесть состояние переключателя
 SWState ModeSW::_read_state(){
-  return digitalRead(SW_T) | (digitalRead(SW_B) << 1);
+  return (SWState)(digitalRead(SW_T) | (digitalRead(SW_B) << 1));
 }//_read_state
 
 

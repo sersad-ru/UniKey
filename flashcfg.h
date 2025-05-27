@@ -55,5 +55,5 @@ void cfg_save(flashcfg &cfg); //Сохранить конфиг во флеш
 void cfg_reset(flashcfg &cfg); //Сбросить конфиг на значения по умолчанию
 void cfg_print(Print &p, flashcfg &cfg); // Вывести настройки
 
-void cfg_print_key(Print &p, flashcfg &cfg, const uint8_t key_num); // Вывести параметры кнопки
+void cfg_print_key(Print &p, flashcfg &cfg, const uint8_t key_num, const uint8_t str_size = 0); // Вывести параметры кнопки (если str_size !=0, то выравниваем вправо нулями до str_size)
 void cfg_print_sw(Print &p, flashcfg &cfg); // Вывести параметры переключателя

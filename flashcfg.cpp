@@ -46,18 +46,42 @@ void cfg_reset(flashcfg &cfg) {
 }//cfg_reset
 
 
+// Посчитать количество символов при выводе
+uint8_t _get_sym_cnt(const keyCodeType val){
+  char buf[12]; // Максимум 10 символов + завершающий 0 и, возможно "-"
+  ltoa(val, buf, 10);
+  return strlen(buf);
+}//_get_sym_cnt
+
+
 void cfg_print(Print &p, flashcfg &cfg){
-  for(uint8_t i = 0; i < arraySize(cfg.keyCode); i++) cfg_print_key(p, cfg, i);
+  uint8_t max_len = 0; // Максимальная длина строки
+  // Ищем максимальную длину строки
+  for(uint8_t i = 0; i < arraySize(cfg.keyCode); i++){
+    uint8_t len = _get_sym_cnt(cfg.keyCode[i]);
+    max_len = max(max_len, len);
+  }//for
+  for(uint8_t i = 0; i < arraySize(cfg.keyCode); i++) cfg_print_key(p, cfg, i, max_len);
   cfg_print_sw(p, cfg);
 }//cfg_print
 
 
 // Вывести параметры кнопки
-void cfg_print_key(Print &p, flashcfg &cfg, const uint8_t key_num){
+void cfg_print_key(Print &p, flashcfg &cfg, const uint8_t key_num, const uint8_t str_size){
   ssMultiPrint(p, KEY_CODE_NAME, key_num, ": ");
-  if(key_num < 10) p.print(' ');
+
+  // Выравниваем вправо, если надо
+  if(str_size){
+    if(key_num < 10) p.print(' ');
+    for(uint8_t i = 0; i < str_size - _get_sym_cnt(cfg.keyCode[key_num]); i++) p.print('0');
+  }//if
+
+  p.print(cfg.keyCode[key_num]);  
+  p.print(F(" ("));
   ssHexPrint(p, cfg.keyCode[key_num]);
-  ssMultiPrintln(p, " (", cfg.keyCode[key_num], ")");
+  p.print(F(") \""));   
+  ssUnicodeCharPrint(p, cfg.keyCode[key_num]);
+  p.println(F("\" "));
 }//cfg_print_key
 
 

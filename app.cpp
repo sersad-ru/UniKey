@@ -92,8 +92,8 @@ void App::_sendWin(const uint8_t key_num){
   } //if 
   //Трансляция цифр в коды цифровой клавиатуры
   const uint8_t dig2kp[] = {KEY_KP_0, KEY_KP_1, KEY_KP_2, KEY_KP_3, KEY_KP_4, KEY_KP_5, KEY_KP_6, KEY_KP_7, KEY_KP_8, KEY_KP_9};
-  char buf[12] = "000000"; // Ведущий 0 + 10 цифр + завершающий ноль
-  utoa(_cfg->keyCode[key_num], &buf[1], 10); // Оставляем ведущий 0 для винды
+  char buf[12] = "0"; // Ведущий 0 + 10 цифр + завершающий ноль
+  ultoa(_cfg->keyCode[key_num], &buf[1], 10); // Оставляем ведущий 0 для винды
   Keyboard.press(KEY_LEFT_ALT); //<Alt>+0+<Keypad>
   for(uint8_t i = 0; buf[i]; i++) Keyboard.write(dig2kp[buf[i] - '0']);
   Keyboard.release(KEY_LEFT_ALT);
