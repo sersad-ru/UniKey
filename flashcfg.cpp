@@ -46,19 +46,11 @@ void cfg_reset(flashcfg &cfg) {
 }//cfg_reset
 
 
-// Посчитать количество символов при выводе
-uint8_t _get_sym_cnt(const keyCodeType val){
-  char buf[12]; // Максимум 10 символов + завершающий 0 и, возможно "-"
-  ltoa(val, buf, 10);
-  return strlen(buf);
-}//_get_sym_cnt
-
-
 void cfg_print(Print &p, flashcfg &cfg){
   uint8_t max_len = 0; // Максимальная длина строки
   // Ищем максимальную длину строки
   for(uint8_t i = 0; i < arraySize(cfg.keyCode); i++){
-    uint8_t len = _get_sym_cnt(cfg.keyCode[i]);
+    uint8_t len = ssGetCharCount(cfg.keyCode[i]);
     max_len = max(max_len, len);
   }//for
   for(uint8_t i = 0; i < arraySize(cfg.keyCode); i++) cfg_print_key(p, cfg, i, max_len);
@@ -73,10 +65,9 @@ void cfg_print_key(Print &p, flashcfg &cfg, const uint8_t key_num, const uint8_t
   // Выравниваем вправо, если надо
   if(str_size){
     if(key_num < 10) p.print(' ');
-    for(uint8_t i = 0; i < str_size - _get_sym_cnt(cfg.keyCode[key_num]); i++) p.print('0');
-  }//if
-
-  p.print(cfg.keyCode[key_num]);  
+    ssAlignPrint(Serial, cfg.keyCode[key_num], str_size, ALIGN_RIGHT, '0');
+  } else p.print(cfg.keyCode[key_num]);  //if
+  
   p.print(F(" ("));
   ssHexPrint(p, cfg.keyCode[key_num]);
   p.print(F(") \""));   

@@ -10,12 +10,6 @@
 * Board: Arduino AVR Boards / Arduino Micro (Leonardo) 
 */
 
-/*
-* Сделать FixedSizePrint и утащить его в multiprint
-* overload версии для int32_t и uint32_t (отличаются на ltoa и ultoa)
-* Так же там GetSymCount - возвращающий число символов в строке
-*/
-
 #include <ssBuildID.h>
 #include <ssMultiPrint.h>
 #include "version.h"
