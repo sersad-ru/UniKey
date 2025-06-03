@@ -50,7 +50,7 @@ This device emulates a HID keyboard. When you press a key it emulates the key se
 ### Serial configuration
 In addition to emulating HID devices, UniKey also sends and receives messages via a COM port. You can connect to it using any COM terminal program. Port specification: `9600 8N1`. This connection can be used to configure device settings.
 
->Ubuntu example: 
+>*Simple Ubuntu example:*
 ```
 $minicom -D /dev/ttyACM0
 <Ctrl>-A Z E
