@@ -71,6 +71,7 @@ void cfg_print_key(Print &p, flashcfg &cfg, const uint8_t key_num, const uint8_t
   p.print(F(" ("));
   ssHexPrint(p, cfg.keyCode[key_num]);
   p.print(F(") \""));   
+  if(cfg.keyCode[key_num] == 0x0301) p.print('x'); // Специальный слуяай для знака ударения
   ssUnicodeCharPrint(p, cfg.keyCode[key_num]);
   p.println(F("\" "));
 }//cfg_print_key
