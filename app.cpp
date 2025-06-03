@@ -12,18 +12,51 @@ const char ERROR_IN_CMD_VAL[] PROGMEM = "*** Error in command: \"";
 const char CFG_SAVED_VAL[] PROGMEM = "Config saved.";
 #define CFG_SAVED_NAME FF(CFG_SAVED_VAL)
 
+const char HLINE_VAL[] PROGMEM = "─";
+#define HLINE FF(HLINE_VAL)
+const char VLINE_VAL[] PROGMEM = "│";
+#define VLINE FF(VLINE_VAL)
+const char CELL_LINE_VAL[] PROGMEM  = "────";
+#define CELL_LINE FF(CELL_LINE_VAL)
+const char CELL_EMPTY_VAL[] PROGMEM = "    ";
+#define CELL_EMPTY FF(CELL_EMPTY_VAL)
+
+const char TOP_LEFT_VAL[] PROGMEM = "┌";
+#define TOP_LEFT FF(TOP_LEFT_VAL)
+const char TOP_MIDDLE_VAL[] PROGMEM = "┬";
+#define TOP_MIDDLE FF(TOP_MIDDLE_VAL)
+const char TOP_RIGHT_VAL[] PROGMEM = "┐";
+#define TOP_RIGHT FF(TOP_RIGHT_VAL)
+
+const char BOTTOM_LEFT_VAL[] PROGMEM = "└";
+#define BOTTOM_LEFT FF(BOTTOM_LEFT_VAL)
+const char BOTTOM_MIDDLE_VAL[] PROGMEM = "┴";
+#define BOTTOM_MIDDLE FF(BOTTOM_MIDDLE_VAL)
+const char BOTTOM_RIGHT_VAL[] PROGMEM = "┘";
+#define BOTTOM_RIGHT FF(BOTTOM_RIGHT_VAL)
+
+const char MIDDLE_LEFT_VAL[] PROGMEM = "├";
+#define MIDDLE_LEFT FF(MIDDLE_LEFT_VAL)
+const char MIDDLE_MIDDLE_VAL[] PROGMEM = "┼";
+#define MIDDLE_MIDDLE FF(MIDDLE_MIDDLE_VAL)
+const char MIDDLE_RIGHT_VAL[] PROGMEM = "┤";
+#define MIDDLE_RIGHT FF(MIDDLE_RIGHT_VAL)
+
+
+
 // Список команд
 typedef enum {
-  CMD_HELP  = 'h', // h - справка по командам
-  CMD_INFO  = '?', // ? - информация о билде, название и конфигурация
-  CMD_RESET = '&', // & - сброс к настройкам по умолчанию (единственным аргументом должна быть "F" или "f". т.е. "&F")
-  CMD_GREEN = 'g', // g - переключить тип вывода для зеленого состояния индикатора Win/Gnome
-  CMD_KEY   = 'k', // k - кнопка k1=125
-  CMD_TEST  = 't', // t - включить / выключить вывод событий в UART (не сохраняется в настройках)
+  CMD_HELP   = 'h', // h - справка по командам
+  CMD_INFO   = '?', // ? - информация о билде, название и конфигурация
+  CMD_LAYOUT = 'l', // l - раскладка клавиатуры
+  CMD_RESET  = '&', // & - сброс к настройкам по умолчанию (единственным аргументом должна быть "F" или "f". т.е. "&F")
+  CMD_GREEN  = 'g', // g - переключить тип вывода для зеленого состояния индикатора Win/Gnome
+  CMD_KEY    = 'k', // k - кнопка k1=125
+  CMD_TEST   = 't', // t - включить / выключить вывод событий в UART (не сохраняется в настройках)
 } CMDCommands;
 
 App::App(flashcfg * c, Keypad * k, ModeSW * s, CMD * cmd){
-  char cmdArr[] = {CMD_HELP, CMD_INFO, CMD_RESET, CMD_GREEN, CMD_KEY, CMD_TEST}; // Настраиваем список команд
+  char cmdArr[] = {CMD_HELP, CMD_INFO, CMD_LAYOUT, CMD_RESET, CMD_GREEN, CMD_KEY, CMD_TEST}; // Настраиваем список команд
   _cfg = c;
   _keys = k;
   _sw = s;
@@ -171,17 +204,44 @@ void App::_processCmd(){
       Serial.println(F("--- HELP ---"));
       Serial.println(F("h\t- this help"));
       Serial.println(F("?\t- show version, build number and current config"));
+      Serial.println(F("l\t- show keyboard layout"));
       Serial.println(F("&F\t- reset to system defaults and save config"));
       Serial.println(F("t\t- turn on / off test mode (only console print and no real action)"));
       Serial.println(F("g\t- swap mode for green light. Win/Gnome"));
       ssMultiPrintln(Serial, F("kN=C\t- key settings: N-key number[0.."), arraySize(_cfg->keyCode) - 1, F("], C - key code. \"k0=169\" - for '©' (copyright) symbol on key 0"));
-      Serial.println(F("Key mapping: "));
-      Serial.println(F("[0]\t[1]\t[2]\t[3]"));
-      Serial.println(F("[4]\t[5]\t[6]\t[7]\t <mode switch>"));
-      Serial.println(F("[8]\t[9]\t[10]\t[11]\t <mode LED>"));
-      Serial.println(F("[12]\t[13]\t[14]\t[15]"));
       Serial.println(F("--- --- ---"));
     break;
+
+    case CMD_LAYOUT:
+      Serial.println(F("Keyboard layout: "));
+      // Номера
+      //"┌────┬────┬────┬────┬────┐"
+      ssMultiPrintln(Serial, TOP_LEFT, CELL_LINE, TOP_MIDDLE, CELL_LINE, TOP_MIDDLE, CELL_LINE, TOP_MIDDLE, CELL_LINE, TOP_MIDDLE, CELL_LINE, TOP_RIGHT);
+      for(uint8_t i = 0; i < arraySize(_cfg->keyCode); i++){
+        Serial.print("│ ");
+        if(i < 10) Serial.print('0');
+        Serial.print(i);
+        Serial.print(' ');
+        if(!((i + 1) % 4) && (i < 12)) // "│    │\n├────┼────┼────┼────┤    │"
+          ssMultiPrintln(Serial, VLINE, CELL_EMPTY, VLINE, "\n", MIDDLE_LEFT, CELL_LINE, MIDDLE_MIDDLE, CELL_LINE, MIDDLE_MIDDLE, CELL_LINE, MIDDLE_MIDDLE, CELL_LINE, MIDDLE_RIGHT, CELL_EMPTY, VLINE);
+      }//for
+      //"│    │\n└────┴────┴────┴────┴────┘"
+      ssMultiPrintln(Serial, VLINE, CELL_EMPTY, VLINE, "\n", BOTTOM_LEFT, CELL_LINE, BOTTOM_MIDDLE, CELL_LINE, BOTTOM_MIDDLE, CELL_LINE, BOTTOM_MIDDLE, CELL_LINE, BOTTOM_MIDDLE, CELL_LINE, BOTTOM_RIGHT);
+
+      // Знчения
+      ssMultiPrintln(Serial, TOP_LEFT, CELL_LINE, TOP_MIDDLE, CELL_LINE, TOP_MIDDLE, CELL_LINE, TOP_MIDDLE, CELL_LINE, TOP_MIDDLE, CELL_LINE, TOP_RIGHT);
+      for(uint8_t i = 0; i < arraySize(_cfg->keyCode); i++){
+        Serial.print("│ ");
+        if(_cfg->keyCode[i] < 0x2700) Serial.print(' '); // Для обычных (не широких) символов
+        if(_cfg->keyCode[i] == 0x0301) Serial.print('x'); // Специальный слуяай для знака ударения
+        ssUnicodeCharPrint(Serial, _cfg->keyCode[i]);
+        Serial.print(' ');
+        if(!((i + 1) % 4) && (i < 12)) 
+          ssMultiPrintln(Serial, VLINE, CELL_EMPTY, VLINE, "\n", MIDDLE_LEFT, CELL_LINE, MIDDLE_MIDDLE, CELL_LINE, MIDDLE_MIDDLE, CELL_LINE, MIDDLE_MIDDLE, CELL_LINE, MIDDLE_RIGHT, CELL_EMPTY, VLINE);
+      }//for
+      ssMultiPrintln(Serial, VLINE, CELL_EMPTY, VLINE, "\n", BOTTOM_LEFT, CELL_LINE, BOTTOM_MIDDLE, CELL_LINE, BOTTOM_MIDDLE, CELL_LINE, BOTTOM_MIDDLE, CELL_LINE, BOTTOM_MIDDLE, CELL_LINE, BOTTOM_RIGHT);
+    break;
+
     default: ssMultiPrintln(Serial, F("!!! Can't find event for this command: \""), _cmd->getArgs() - 1, "\""); break; // Необработанная команда
   }//switch
 }//_processCmd

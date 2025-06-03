@@ -56,6 +56,7 @@ Available configuration commands are:
 |:---:|:---:|:---|
 |`h`|none|Get the list of available commands|
 |`?`|none|Get the version information and current configuration|
+|`l`|none|Dispaly the keyboard layout|
 |`&`|`F`|Reset the configuration to defaults. Example: `&F`|
 |`t`|none|Turn on or off the test mode. In the test mode key numbers and unicode codes will be send only to COM-port. No key-sequence will be sent to the PC.|
 |`g`|none|Swap `Windows` and `Gnome` mode between the `First` (`green` LED) and `Middle` (`yellow` LED) position of the mode-switch. The `Second` position (`red` LED) is always used for `HTML` mode.|
@@ -63,10 +64,15 @@ Available configuration commands are:
 
 ### Keyboard layout
 ```
- [0]  [1]  [2]  [3]
- [4]  [5]  [6]  [7]  <mode switch>
- [8]  [9] [10] [11]  <red-green LED>
-[12] [13] [14] [15] 
+┌────┬────┬────┬────┬────┐
+│ 00 │ 01 │ 02 │ 03 │    │
+├────┼────┼────┼────┤    │
+│ 04 │ 05 │ 06 │ 07 │    │
+├────┼────┼────┼────┤    │
+│ 08 │ 09 │ 10 │ 11 │    │
+├────┼────┼────┼────┤    │
+│ 12 │ 13 │ 14 │ 15 │    │
+└────┴────┴────┴────┴────┘ 
 
 ```
 
