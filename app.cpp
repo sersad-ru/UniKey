@@ -16,9 +16,9 @@ const char HLINE_VAL[] PROGMEM = "─";
 #define HLINE FF(HLINE_VAL)
 const char VLINE_VAL[] PROGMEM = "│";
 #define VLINE FF(VLINE_VAL)
-const char CELL_LINE_VAL[] PROGMEM  = "────";
+const char CELL_LINE_VAL[] PROGMEM  = "─────";
 #define CELL_LINE FF(CELL_LINE_VAL)
-const char CELL_EMPTY_VAL[] PROGMEM = "    ";
+const char CELL_EMPTY_VAL[] PROGMEM = "     ";
 #define CELL_EMPTY FF(CELL_EMPTY_VAL)
 
 const char TOP_LEFT_VAL[] PROGMEM = "┌";
@@ -218,7 +218,7 @@ void App::_processCmd(){
       //"┌────┬────┬────┬────┬────┐"
       ssMultiPrintln(Serial, TOP_LEFT, CELL_LINE, TOP_MIDDLE, CELL_LINE, TOP_MIDDLE, CELL_LINE, TOP_MIDDLE, CELL_LINE, TOP_MIDDLE, CELL_LINE, TOP_RIGHT);
       for(uint8_t i = 0; i < arraySize(_cfg->keyCode); i++){
-        Serial.print("│ ");
+        Serial.print("│ k");
         if(i < 10) Serial.print('0');
         Serial.print(i);
         Serial.print(' ');
@@ -235,7 +235,7 @@ void App::_processCmd(){
         if(_cfg->keyCode[i] < 0x2700) Serial.print(' '); // Для обычных (не широких) символов
         if(_cfg->keyCode[i] == 0x0301) Serial.print('x'); // Специальный слуяай для знака ударения
         ssUnicodeCharPrint(Serial, _cfg->keyCode[i]);
-        Serial.print(' ');
+        Serial.print("  ");
         if(!((i + 1) % 4) && (i < 12)) 
           ssMultiPrintln(Serial, VLINE, CELL_EMPTY, VLINE, "\n", MIDDLE_LEFT, CELL_LINE, MIDDLE_MIDDLE, CELL_LINE, MIDDLE_MIDDLE, CELL_LINE, MIDDLE_MIDDLE, CELL_LINE, MIDDLE_RIGHT, CELL_EMPTY, VLINE);
       }//for
