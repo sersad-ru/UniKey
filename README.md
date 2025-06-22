@@ -1,6 +1,6 @@
 # UniKey
 Additional keyboard for unicode characters.
-<img src="img/main.jpg" width="400"/></p>
+<p align="center"><img src="img/main.jpg" width="400"/></p>
 
 
 ## Table of contents
@@ -33,7 +33,7 @@ The device is based on:
 
 <p align="center"><img src="img/schematic.png"/></p>
 
-<img src="img/without-case.jpg" width="400"/></p>
+<p align="center"><img src="img/without-case.jpg" width="400"/></p>
 
 
 ## Software
