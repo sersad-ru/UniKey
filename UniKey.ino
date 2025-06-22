@@ -20,7 +20,7 @@
 #include "cmd.h"
 #include "app.h"
 
-//#define RESET_FLASH_CFG //Сбросить конфигурацию 
+//#define RESET_FLASH_CFG //Сбросить конфигурацию
 
 // Конфиг
 flashcfg cfg;

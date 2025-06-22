@@ -1,7 +1,7 @@
 # UniKey
 Additional keyboard for unicode characters.
+<img src="img/main.jpg" width="400"/></p>
 
-**Main image**
 
 ## Table of contents
 * [Overview](#overview)
@@ -31,9 +31,9 @@ The device is based on:
 *  3-mode side switch
 *  Red-green control LED
 
-**Schematic image**
+<p align="center"><img src="img/schematic.png"/></p>
 
-**No case image**
+<img src="img/without-case.jpg" width="400"/></p>
 
 
 ## Software
