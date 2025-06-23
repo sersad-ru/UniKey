@@ -1,6 +1,6 @@
 # UniKey
 Additional keyboard for unicode characters.
-<p align="center"><img src="img/main.jpg" width="400"/></p>
+<p align="center"><img src="img/main.png" width="400"/></p>
 
 
 ## Table of contents
