@@ -8,7 +8,7 @@
 
 //#define CMD_CASE_SENSITIVE // Учитывать регистр при анализе команд
 #define CMD_BUF_SIZE 32 // Размер буфера для приема команд с аргументами
-#define CMD_MAX_COMMANDS 8 // Максимальное количество обрабатываемых команд
+#define CMD_MAX_COMMANDS 9 // Максимальное количество обрабатываемых команд
 
 class CMD : public ssExecutor {
   public:

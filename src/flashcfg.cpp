@@ -41,6 +41,8 @@ void cfg_reset(flashcfg &cfg) {
 
   cfg.is_green_win = SW_MODE_DEFAULT;
 
+  for(uint8_t i = 0; i < 16; i++) cfg.keyEntity[i][0] = 0; // Стерли все мнемоники
+
   cfg.noValue = 0;//Выставляем флаг, что данные установлены
   cfg_save(cfg); //сохраняем значения
 }//cfg_reset
@@ -71,9 +73,11 @@ void cfg_print_key(Print &p, flashcfg &cfg, const uint8_t key_num, const uint8_t
   p.print(F(" ("));
   ssHexPrint(p, cfg.keyCode[key_num]);
   p.print(F(") \""));   
-  if(cfg.keyCode[key_num] == 0x0301) p.print('x'); // Специальный слуяай для знака ударения
+  if(cfg.keyCode[key_num] == 0x0301) p.print('x'); // Специальный случай для знака ударения
   ssUnicodeCharPrint(p, cfg.keyCode[key_num]);
-  p.println(F("\" "));
+  p.print(F("\" "));
+  if(strlen(cfg.keyEntity[key_num])) ssMultiPrint(p, "\"&", cfg.keyEntity[key_num], ";\"");
+  p.println();  
 }//cfg_print_key
 
 

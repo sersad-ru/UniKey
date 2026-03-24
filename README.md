@@ -12,7 +12,9 @@ Additional keyboard for unicode characters.
 
 ## Overview
 
-This is a little keypad which helps to enter unicode symbols. It emulates `<Alt>+0+<Keypad>` sequence for Windows and `<Ctrl>+<Shift>+<u>` for Gnome. Of course it can send HTML `&#`-codes. 
+This is a little keypad which helps to enter unicode symbols. It emulates `<Alt>+0+<Keypad>` sequence for Windows and `<Ctrl>+<Shift>+<u>` for Gnome. 
+Of course it can send HTML `&#`-codes and entities. You can specify `HTML entities` for keys in a separate array. If an entity is not specified, 
+the `&#`-code will be sent. Otherwise, the `HTML entity` will be sent.
 
 3-position switch helps to choose the mode. 
 * First position (`green` LED) used (by default) for `Windows` mode.
@@ -70,6 +72,7 @@ Available configuration commands are:
 |`t`|none|Turn on or off the test mode. In the test mode key numbers and unicode codes will be send only to COM-port. No key-sequence will be sent to the PC.|
 |`g`|none|Swap `Windows` and `Gnome` mode between the `First` (`green` LED) and `Middle` (`yellow` LED) position of the mode-switch. The `Second` position (`red` LED) is always used for `HTML` mode.|
 |`k`|`X=C`|Assign the code `C` to the `X` key. Example: `k0=169`. The code **169** (unicode symbol `©`) will be assigned to the key **0**.|
+|`e`|`e=S`|Assign the `HTML entity` `S` to the `X` key. Example: `e0=&copy;`. The `HTML entity` **&copy;** (unicode symbol `©`) will be assigned to the key **0**. Maximum entity length: **28** characters. To delete `HTML entity` for key **0** use `e0=`.|
 
 ### Keyboard layout
 ```

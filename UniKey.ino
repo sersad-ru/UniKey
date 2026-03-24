@@ -12,13 +12,13 @@
 
 #include <ssBuildID.h>
 #include <ssMultiPrint.h>
-#include "version.h"
-#include "flashcfg.h"
-#include "pinout.h"
-#include "keypad.h"
-#include "mode_sw.h"
-#include "cmd.h"
-#include "app.h"
+#include "src/version.h"
+#include "src/flashcfg.h"
+#include "src/pinout.h"
+#include "src/keypad.h"
+#include "src/mode_sw.h"
+#include "src/cmd.h"
+#include "src/app.h"
 
 //#define RESET_FLASH_CFG //Сбросить конфигурацию
 

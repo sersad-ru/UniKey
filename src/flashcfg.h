@@ -40,13 +40,16 @@ const char SW_MODE_GNOME_VAL[] PROGMEM = "GNOME";
 #define SW_MODE_DEFAULT true // По-умолчанию зеленый режим - это windows
 
 // Параметры конфигурации
-typedef int32_t keyCodeType;
+#define ENTITY_SIZE 28          // Сколько символов может занимать мнемоника
+typedef int32_t  keyCodeType;   // UTF-8 код
+typedef char keyEntityType[ENTITY_SIZE + 1]; // Мнемоника. CounterClockwiseContourIntegral - самая длинная
 
 typedef struct {
   uint8_t  noValue; // Флаг того (==1), что не было сохраненных значений 
   
-  keyCodeType keyCode[16]; // Коды выводимых символов [0..15] (unicode 2 байта)
-  uint8_t is_green_win; // Флаг указывающий использовать win-отправку, когда переключатель зеленый (red - всегда html, а yellow - что осталось)
+  keyCodeType   keyCode[16];   // Коды выводимых символов [0..15] (unicode 2 байта)
+  keyEntityType keyEntity[16]; // Мнемоники HTML (без "&"" и ";")
+  uint8_t is_green_win;        // Флаг указывающий использовать win-отправку, когда переключатель зеленый (red - всегда html, а yellow - что осталось)
 } flashcfg;
 
 bool cfg_init(flashcfg &cfg); //Подготовиться к работе с конфигом и загрузить его, а если надо и прописать по умолчанию (вернет false - если по умолчанию)

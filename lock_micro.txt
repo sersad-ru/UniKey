@@ -1,0 +1,78 @@
+Для Ubuntu (bash-скрипт)
+
+Создайте файл, например lock_micro.sh:
+Bash
+
+#!/bin/bash
+
+# Настройка порта (измените, если у вас другой, например /dev/ttyACM1)
+PORT="/dev/ttyACM0"
+CHIP="m32u4"
+PROG="avr109"
+
+echo "--- Утилита управления защитой Arduino Micro ---"
+echo "1. Заблокировать (Lock 0xFC)"
+echo "2. Разблокировать и стереть (Unlock + Erase)"
+read -p "Выберите действие [1-2]: " choice
+
+if [ "$choice" == "1" ]; then
+    echo "Нажмите RESET на плате дважды и нажмите Enter здесь..."
+    read
+    avrdude -p $CHIP -c $PROG -P $PORT -U lock:w:0xFC:m
+elif [ "$choice" == "2" ]; then
+    echo "Нажмите RESET на плате дважды и нажмите Enter здесь..."
+    read
+    avrdude -p $CHIP -c $PROG -P $PORT -e -U lock:w:0x3F:m
+else
+    echo "Отмена."
+fi
+
+Не забудьте сделать его исполняемым: chmod +x lock_micro.sh.
+Для Windows (batch-файл)
+
+Создайте файл lock_micro.bat. Обратите внимание, что путь к avrdude может отличаться в зависимости от версии IDE. Скрипт попытается найти его в стандартной папке Arduino IDE 2.x.
+Фрагмент кода
+
+@echo off
+setlocal
+:: Укажите ваш COM-порт
+set PORT=COM3
+:: Путь к avrdude (проверьте этот путь у себя!)
+set AVR_PATH="%LOCALAPPDATA%\Arduino15\packages\arduino\tools\avrdude\6.3.0-arduino17\bin\avrdude.exe"
+set CONF_PATH="%LOCALAPPDATA%\Arduino15\packages\arduino\tools\avrdude\6.3.0-arduino17\etc\avrdude.conf"
+
+echo 1. Заблокировать клавиатуру
+echo 2. Стереть и разблокировать
+set /p choice="Выберите вариант: "
+
+if "%choice%"=="1" (
+    echo Нажмите RESET на плате дважды и нажмите любую клавишу...
+    pause > nul
+    %AVR_PATH% -C %CONF_PATH% -p m32u4 -c avr109 -P %PORT% -U lock:w:0xFC:m
+) else if "%choice%"=="2" (
+    echo Нажмите RESET на плате дважды и нажмите любую клавишу...
+    pause > nul
+    %AVR_PATH% -C %CONF_PATH% -p m32u4 -c avr109 -P %PORT% -e -U lock:w:0x3F:m
+)
+
+pause
+
+Как пользоваться:
+
+    Подключите клавиатуру.
+
+    Запустите нужный скрипт.
+
+    Выберите пункт 1 (Заблокировать).
+
+    Когда скрипт попросит, дважды быстро нажмите кнопку Reset на плате Arduino Micro (индикатор на плате начнет плавно мигать — это режим загрузчика) и сразу подтвердите действие в консоли.
+
+Что важно знать:
+
+    Проверка: После блокировки попробуйте прошить "Blink" из Arduino IDE. Если загрузка завершится ошибкой — значит, защита работает.
+
+    Порт: Если в Ubuntu порт меняется (был ACM0, стал ACM1), просто поправьте переменную PORT в начале скрипта.
+
+    0x3F vs 0xFF: Для разблокировки я указал 0x3F (это стандартное значение "unlocked" для 32U4), оно эквивалентно сбросу защиты.
+
+Теперь ваша клавиатура защищена от случайной перезаписи, даже если вы ошибетесь портом в IDE.

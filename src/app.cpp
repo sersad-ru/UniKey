@@ -52,11 +52,12 @@ typedef enum {
   CMD_RESET  = '&', // & - сброс к настройкам по умолчанию (единственным аргументом должна быть "F" или "f". т.е. "&F")
   CMD_GREEN  = 'g', // g - переключить тип вывода для зеленого состояния индикатора Win/Gnome
   CMD_KEY    = 'k', // k - кнопка k1=125
+  CMD_ENTITY = 'e', // e - мнемоника e1=&nbsp; 
   CMD_TEST   = 't', // t - включить / выключить вывод событий в UART (не сохраняется в настройках)
 } CMDCommands;
 
 App::App(flashcfg * c, Keypad * k, ModeSW * s, CMD * cmd){
-  char cmdArr[] = {CMD_HELP, CMD_INFO, CMD_LAYOUT, CMD_RESET, CMD_GREEN, CMD_KEY, CMD_TEST}; // Настраиваем список команд
+  char cmdArr[] = {CMD_HELP, CMD_INFO, CMD_LAYOUT, CMD_RESET, CMD_GREEN, CMD_KEY, CMD_ENTITY, CMD_TEST}; // Настраиваем список команд
   _cfg = c;
   _keys = k;
   _sw = s;
@@ -94,8 +95,13 @@ void App::_sendHTML(const uint8_t key_num){
     return;
   } //if 
 
-  Keyboard.print("&#"); // &#code;
-  Keyboard.print(_cfg->keyCode[key_num]);
+  Keyboard.print("&"); // &#code;
+  // Если есть мнемоника - выводим ее 
+  if(strlen(_cfg->keyEntity[key_num])) Keyboard.print(_cfg->keyEntity[key_num]);
+    else { // нет мнемоники - выводим код 
+      Keyboard.print("#");
+      Keyboard.print(_cfg->keyCode[key_num]);
+    }//if
   Keyboard.print(";");
 }//_sendHTML
 
@@ -138,7 +144,9 @@ void App::_printTest(const __FlashStringHelper* mode, uint8_t key_num){
   if(!Serial.availableForWrite()) return; // Некуда писать  
   ssMultiPrint(Serial, F("Mode is: \""), mode, "\". Presed ", KEY_CODE_NAME, key_num, " = ");
   ssHexPrint(Serial, _cfg->keyCode[key_num]);
-  ssMultiPrintln(Serial, " (", _cfg->keyCode[key_num], ")");
+  ssMultiPrint(Serial, " (", _cfg->keyCode[key_num], ")");
+  if(strlen(_cfg->keyEntity[key_num])) ssMultiPrint(Serial, " \"&", _cfg->keyEntity[key_num], ";\"");
+  Serial.println();
 }//_printTest
 
 
@@ -147,6 +155,10 @@ void App::_processCmd(){
   _cmd->exec(); // Отрабатываем комады
   uint8_t key_num = 0; // Номер кнопки
   keyCodeType key_code = 0; // Код символа (читаем int32, поскольку sscanf не умеет принимать hex и dec для unsigned)
+  char entity[ENTITY_SIZE + 3] = ""; // Буфер для мнемоники добавляется место под возможный '&', ';' и '\0'
+  char * start; // Указатели для обработки мнемоники
+  char * end;
+
   switch(_cmd->getCommand()){
     case CMD::CMD_NONE: break; // Нет команды
 
@@ -182,6 +194,34 @@ void App::_processCmd(){
       Serial.println(CFG_SAVED_NAME);
     break;
 
+    case CMD_ENTITY: // Присваивание мнемоники кнопке
+      // Получаем номер и мнемонику кнопки (ENTITY_SIZE + 3 на '&', ';' и '\0')
+      if(sscanf(_cmd->getArgs(), "%hhu=%31[^; \n]", &key_num, entity) < 1) {
+        ssMultiPrintln(Serial, ERROR_IN_CMD_NAME, _cmd->getArgs() - 1, "\""); 
+        break;
+      }//if
+      // Проверяем номер кнопки
+      if(key_num > arraySize(_cfg->keyCode) - 1){ // Тот ли номер кнопки
+        ssMultiPrintln(Serial, F("*** Error: Illegal key number: "), key_num, F(" (not in [1.."), arraySize(_cfg->keyCode) - 1, F("]) in command \""), (char*)(_cmd->getArgs() - 1), "\""); 
+        break;
+      }//if
+
+      // Отрезаем ведущий '&' если был
+      start = entity;
+      if(*start == '&') start++;
+
+      // Режем по ';'
+      end = strchr(start, ';');
+      if(end) *end = '\0';
+
+      strncpy(_cfg->keyEntity[key_num], start, ENTITY_SIZE);
+      _cfg->keyEntity[key_num][28] = '\0';
+
+      cfg_print_key(Serial, *_cfg, key_num);
+      cfg_save(*_cfg); //сохраняем значения
+      Serial.println(CFG_SAVED_NAME);
+    break;
+
     case CMD_RESET: // Сброс к настройкам по умолчанию
       if(_cmd->getArgs()[0] != 'f') {
         ssMultiPrintln(Serial, ERROR_IN_CMD_NAME, _cmd->getArgs() - 1, "\""); 
@@ -209,6 +249,7 @@ void App::_processCmd(){
       Serial.println(F("t\t- turn on / off test mode (only console print and no real action)"));
       Serial.println(F("g\t- swap mode for green light. Win/Gnome"));
       ssMultiPrintln(Serial, F("kN=C\t- key settings: N-key number[0.."), arraySize(_cfg->keyCode) - 1, F("], C - key code. \"k0=169\" - for '©' (copyright) symbol on key 0"));
+      ssMultiPrintln(Serial, F("eN=S\t- key entity value: N-key number[0.."), arraySize(_cfg->keyCode) - 1, F("], S - entity string. \"e0=copy\" - for '&copy;' (copyright) HTML entity on key 0"));
       Serial.println(F("--- --- ---"));
     break;
 

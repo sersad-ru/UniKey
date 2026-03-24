@@ -7,10 +7,10 @@
 
 #define FF(val) ((const __FlashStringHelper*)val)
 
-const char APP_VER_VAL[] PROGMEM = "v1.0"; // Базовая версия
+const char APP_VER_VAL[] PROGMEM = "v2.0"; // Базовая версия
 #define APP_VER FF(APP_VER_VAL)
 
-const char APP_CPY_VAL[] PROGMEM = " (c)2025"; // Годы копирайта
+const char APP_CPY_VAL[] PROGMEM = " (c)2025-2026"; // Годы копирайта
 #define APP_COPYRIGHT FF(APP_CPY_VAL)
 
 const char APP_NAME_VAL[] PROGMEM = "UniKey "; // Название приложения
