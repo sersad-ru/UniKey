@@ -90,4 +90,5 @@ Available configuration commands are:
 ```
 
 ## History
+* 2.0 - [`HTML entities`](https://en.wikipedia.org/wiki/List_of_XML_and_HTML_character_entity_references) was added. 2026-03-24.
 * 1.0 - First stable release. 2025-05-26.
