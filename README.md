@@ -13,7 +13,7 @@ Additional keyboard for unicode characters.
 ## Overview
 
 This is a little keypad which helps to enter unicode symbols. It emulates `<Alt>+0+<Keypad>` sequence for Windows and `<Ctrl>+<Shift>+<u>` for Gnome. 
-Of course it can send HTML `&#`-codes and entities. You can specify `HTML entities` for keys in a separate array. If an entity is not specified, 
+Of course it can send HTML `&#`-codes and [entities](https://en.wikipedia.org/wiki/List_of_XML_and_HTML_character_entity_references). You can specify `HTML entities` for keys in a separate array. If an entity is not specified, 
 the `&#`-code will be sent. Otherwise, the `HTML entity` will be sent.
 
 3-position switch helps to choose the mode. 
