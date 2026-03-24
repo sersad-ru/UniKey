@@ -73,7 +73,7 @@ Available configuration commands are:
 |`t`|none|Turn on or off the test mode. In the test mode key numbers and unicode codes will be send only to COM-port. No key-sequence will be sent to the PC.|
 |`g`|none|Swap `Windows` and `Gnome` mode between the `First` (`green` LED) and `Middle` (`yellow` LED) position of the mode-switch. The `Second` position (`red` LED) is always used for `HTML` mode.|
 |`k`|`X=C`|Assign the code `C` to the `X` key. Example: `k0=169`. The code **169** (unicode symbol `©`) will be assigned to the key **0**.|
-|`e`|`e=S`|Assign the `HTML entity` `S` to the `X` key. Example: `e0=&copy;`. The [`HTML entity`](https://en.wikipedia.org/wiki/List_of_XML_and_HTML_character_entity_references) `&amp;copy;` (unicode symbol `©`) will be assigned to the key **0**. Maximum entity length: **28** characters. To delete [`HTML entity`](https://en.wikipedia.org/wiki/List_of_XML_and_HTML_character_entity_references) for key **0** use `e0=`.|
+|`e`|`e=S`|Assign the `HTML entity` `S` to the `X` key. Example: `e0=&copy;`. The [`HTML entity`](https://en.wikipedia.org/wiki/List_of_XML_and_HTML_character_entity_references) `&copy;` (unicode symbol `©`) will be assigned to the key **0**. Maximum entity length: **28** characters. To delete [`HTML entity`](https://en.wikipedia.org/wiki/List_of_XML_and_HTML_character_entity_references) for key **0** use `e0=`.|
 
 ### Keyboard layout
 ```
